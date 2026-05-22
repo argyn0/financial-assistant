@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
+import { getAIClient, AI_MODEL, isAIConfigured } from "@/lib/ai-client";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 
 export async function POST(request: NextRequest) {
@@ -28,9 +28,9 @@ export async function POST(request: NextRequest) {
       .gte("date", start)
       .lte("date", end);
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!isAIConfigured()) {
       return NextResponse.json({
-        reply: "AI-чат недоступен. Настройте OPENAI_API_KEY.",
+        reply: "AI-чат недоступен. Настройте GROQ_API_KEY.",
       });
     }
 
@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
       })
       .join("\n");
 
-    const openai = getOpenAIClient();
-    const completion = await openai.chat.completions.create({
+    const groq = getAIClient();
+    const completion = await groq.chat.completions.create({
       model: AI_MODEL,
       messages: [
         {

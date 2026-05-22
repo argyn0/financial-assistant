@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
+import { getAIClient, AI_MODEL, isAIConfigured } from "@/lib/ai-client";
 import { categorizeByRules } from "@/lib/categorize";
 import type { Category } from "@/types";
 
@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    if (needsAI.length > 0 && process.env.OPENAI_API_KEY) {
-      const openai = getOpenAIClient();
+    if (needsAI.length > 0 && isAIConfigured()) {
+      const groq = getAIClient();
       const batchSize = 20;
 
       for (let i = 0; i < needsAI.length; i += batchSize) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 Верни JSON массив: [{"index":0,"category_id":"uuid"},...]
 Транзакции: ${JSON.stringify(batch)}`;
 
-        const completion = await openai.chat.completions.create({
+        const completion = await groq.chat.completions.create({
           model: AI_MODEL,
           messages: [
             {

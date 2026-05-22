@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
+import { getAIClient, AI_MODEL, isAIConfigured } from "@/lib/ai-client";
 import { format, startOfDay } from "date-fns";
 
 export async function ensureDailyTip() {
@@ -10,7 +10,7 @@ export async function ensureDailyTip() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user || !process.env.OPENAI_API_KEY) return null;
+  if (!user || !isAIConfigured()) return null;
 
   const today = format(startOfDay(new Date()), "yyyy-MM-dd");
 
@@ -30,8 +30,8 @@ export async function ensureDailyTip() {
     .order("date", { ascending: false })
     .limit(30);
 
-  const openai = getOpenAIClient();
-  const completion = await openai.chat.completions.create({
+  const groq = getAIClient();
+  const completion = await groq.chat.completions.create({
     model: AI_MODEL,
     messages: [
       {

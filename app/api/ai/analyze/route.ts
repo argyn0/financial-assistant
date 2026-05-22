@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
+import { getAIClient, AI_MODEL, isAIConfigured } from "@/lib/ai-client";
 import { format, subDays } from "date-fns";
 
 export async function POST(request: NextRequest) {
@@ -37,13 +37,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!isAIConfigured()) {
       return NextResponse.json({
         recommendations: [
           {
             type: "insight",
             title: "AI недоступен",
-            content: "Добавьте OPENAI_API_KEY для персонального анализа.",
+            content: "Добавьте GROQ_API_KEY для персонального анализа.",
           },
         ],
       });
@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    const openai = getOpenAIClient();
-    const completion = await openai.chat.completions.create({
+    const groq = getAIClient();
+    const completion = await groq.chat.completions.create({
       model: AI_MODEL,
       messages: [
         {

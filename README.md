@@ -7,7 +7,7 @@ Production-ready веб-приложение для учёта финансов 
 - **Next.js 14** (App Router, TypeScript)
 - **Tailwind CSS** + Radix UI + Framer Motion
 - **Supabase** (Auth, PostgreSQL, RLS)
-- **OpenAI** (`gpt-4o-mini`)
+- **Groq** (`llama3-70b-8192` и др.)
 - **Zustand**, React Hook Form + Zod
 - **Recharts**, next-pwa
 
@@ -31,7 +31,9 @@ cp .env.example .env.local
 ```env
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-OPENAI_API_KEY=sk-...
+GROQ_API_KEY=gsk_...
+AI_PROVIDER=groq
+AI_MODEL=llama3-70b-8192
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
@@ -103,7 +105,7 @@ vercel
 ```
 app/           # Страницы (App Router)
 components/    # UI, layout, charts
-lib/           # Supabase, OpenAI, data
+lib/           # Supabase, Groq AI client, data
 hooks/         # theme, hotkey
 stores/        # Zustand
 utils/         # Парсинг выписок
