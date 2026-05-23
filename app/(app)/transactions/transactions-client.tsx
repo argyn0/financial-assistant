@@ -16,20 +16,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Trash2, CheckSquare } from "lucide-react";
+import { Search, Trash2, CheckSquare, Upload } from "lucide-react";
+import { ImportModal } from "@/components/transactions/ImportModal";
+import type { Category } from "@/types";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
   initialTransactions: Transaction[];
+  categories: Category[];
+  userId: string;
 }
 
-export function TransactionsClient({ initialTransactions }: Props) {
+export function TransactionsClient({
+  initialTransactions,
+  categories,
+  userId,
+}: Props) {
   const [transactions, setTransactions] = useState(initialTransactions);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [importOpen, setImportOpen] = useState(false);
   const { showToast } = useUIStore();
   const supabase = createClient();
 
@@ -78,11 +87,17 @@ export function TransactionsClient({ initialTransactions }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold">Операции</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          {filtered.length} из {transactions.length}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">Операции</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            {filtered.length} из {transactions.length}
+          </p>
+        </div>
+        <Button size="sm" onClick={() => setImportOpen(true)}>
+          <Upload className="h-4 w-4" />
+          Импорт
+        </Button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -199,6 +214,13 @@ export function TransactionsClient({ initialTransactions }: Props) {
           ))}
         </div>
       )}
+
+      <ImportModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        userId={userId}
+        categories={categories}
+      />
     </div>
   );
 }

@@ -10,6 +10,8 @@ export interface Profile {
   updated_at: string;
 }
 
+export type BudgetPeriod = "daily" | "weekly" | "monthly" | "yearly";
+
 export interface Category {
   id: string;
   user_id: string;
@@ -18,6 +20,8 @@ export interface Category {
   color: string;
   type: TransactionType;
   is_default: boolean;
+  budget_limit?: number | null;
+  budget_period?: BudgetPeriod | null;
   created_at: string;
 }
 
@@ -33,6 +37,7 @@ export interface Transaction {
   currency: string;
   tags: string[];
   is_recurring: boolean;
+  source?: "manual" | "import";
   created_at: string;
   updated_at: string;
 }

@@ -1,11 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { getOrCreateDefaults } from "@/lib/actions/categories";
-import { AddTransactionClient } from "./add-client";
+import { CategoriesPageClient } from "./categories-client";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function AddPage() {
+export default async function CategoriesPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -16,5 +16,5 @@ export default async function AddPage() {
   const result = await getOrCreateDefaults(user.id);
   const categories = result.success ? result.data : [];
 
-  return <AddTransactionClient categories={categories} userId={user.id} />;
+  return <CategoriesPageClient initialCategories={categories} userId={user.id} />;
 }

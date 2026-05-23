@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -179,32 +180,19 @@ export function SettingsClient({ profile, categories, userEmail }: Props) {
       </Card>
 
       <Card glass>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Tags className="h-5 w-5" />
             Категории ({categories.length})
           </CardTitle>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/settings/categories">Управление</Link>
+          </Button>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
-            {categories.map((c) => (
-              <div
-                key={c.id}
-                className="flex items-center gap-2 text-sm p-2 rounded-lg bg-muted/50"
-              >
-                <div
-                  className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: c.color }}
-                />
-                <span className="truncate">{c.name}</span>
-                {c.is_default && (
-                  <span className="text-[10px] text-muted-foreground ml-auto">
-                    default
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Создавайте категории с иконками, цветами и лимитами бюджета.
+          </p>
         </CardContent>
       </Card>
 
